@@ -183,7 +183,6 @@ uint8_t aws_prov_save_signature(char* command, uint8_t* response, uint16_t* resp
 uint8_t aws_prov_get_public_key(char* command, uint8_t* response, uint16_t* response_length);
 uint8_t aws_prov_get_cert(char* command, uint8_t* response, uint16_t* response_length);
 uint8_t aws_prov_build_device_tbs(char* command, uint8_t* tbs_digest, uint16_t* tbs_size);
-uint8_t aws_prov_get_firmware_version(char* command, uint8_t* response, uint16_t* response_length);
 uint8_t aws_prov_parse_aws_commands(uint16_t commandLength, uint8_t *command, uint16_t *responseLength, uint8_t *response);
 void aws_prov_handler(void);
 void aws_prov_task(void *params);

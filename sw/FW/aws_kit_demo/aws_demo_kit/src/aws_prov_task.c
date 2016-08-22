@@ -50,7 +50,7 @@
 
 /** \brief version of development kit firmware
  *         that contains AES132 and SHA204 library */
-const char VersionKit[] = {1, 0, 5};
+const char VersionKit[] = {1, 0, 6};		//!< AWS kit version
 const char VersionSha204[] = {1, 3, 0};
 const char VersionAes132[] = {1, 1, 0};
 const char VersionEcc508[] = {1, 1, 0};		//!< ECC108 string
@@ -61,7 +61,6 @@ const char StringEcc508[] = "ECC108 ";		//!< ECC108 string
 
 const char StringKitShort[] = "CK590 ";		//!< short string of Microbase kit
 const char StringKit[] = "ATSAMG55 ";		//!< long string of Microbase kit
-const char AWSKitVersion[] = "V1.0.0 ";		//!< firmware version of AWS kit
 
 device_info_t device_info[DISCOVER_DEVICE_COUNT_MAX];
 uint8_t device_count = 0;
@@ -1518,16 +1517,6 @@ uint8_t aws_prov_build_device_tbs(char* command, uint8_t* tbs_digest, uint16_t* 
 	return status;
 }
 
-uint8_t aws_prov_get_firmware_version(char* command, uint8_t* response, uint16_t* response_length)
-{
-	uint8_t status = KIT_STATUS_SUCCESS;
-
-	strcpy((char*) response, AWSKitVersion);
-	*response_length = strlen((char*) response);
-
-	return status;
-}
-
 /** \brief This function parses communication commands (ASCII) received from a
 *         remote host in the context of an AWS application: commands starting with aw
 * \param[in] commandLength
@@ -1568,20 +1557,6 @@ uint8_t aws_prov_parse_aws_commands(uint16_t commandLength, uint8_t *command,
 		case 'P':
 			status = aws_prov_get_public_key(pToken + 1, response, responseLength);
 			break;
-		break;
-		// ------------------ aw[s]:fv() ------------------
-		case 'f':
-		case 'F':
-			switch (pToken[2])
-			{
-				case 'v':
-				case 'V':	
-					status = aws_prov_get_firmware_version(pToken + 2, response, responseLength);
-				break;
-				default:
-					status = KIT_STATUS_UNKNOWN_COMMAND;
-				break;				
-			}
 		break;
 		case 'S':
 		case 's':

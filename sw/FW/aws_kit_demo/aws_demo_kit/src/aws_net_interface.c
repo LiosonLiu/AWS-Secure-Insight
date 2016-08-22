@@ -474,7 +474,6 @@ void aws_net_ntp_socket_cb(SOCKET sock, uint8_t u8Msg, void* pvMsg)
 	switch (u8Msg) {
 		case SOCKET_MSG_BIND:
 		{
-			/* printf("socket_cb: socket_msg_bind!\r\n"); */
 			tstrSocketBindMsg *pstrBind = (tstrSocketBindMsg *)pvMsg;
 			if (pstrBind && pstrBind->status == 0) {
 				ENABLE_NTP_SOCKET_STATUS(NTP_SOCKET_STATUS_BIND);
@@ -690,12 +689,12 @@ int aws_net_receive_packet_cb(WOLFSSL* ssl, void* ctx, byte* packet, int sz, int
 			tlsSocketBuf = (uint8_t*)malloc(MAIN_WIFI_M2M_BUFFER_SIZE * 3);
 			if (tlsSocketBuf == NULL) {
 				AWS_ERROR("Failed to allocate socket heap!\r\n");
-				return -1;
+				return WOLFSSL_CBIO_ERR_GENERAL;
 			}
 
 		    if (recv(*sock, tlsSocketBuf, MAIN_WIFI_M2M_BUFFER_SIZE, ssl->rflags)) {
 				AWS_ERROR("Failed to receive packet!");
-				return -1;
+				return WOLFSSL_CBIO_ERR_CONN_CLOSE;
 		    }
 
 			while (!GET_SOCKET_STATUS(SOCKET_STATUS_RECEIVE)) {
@@ -714,7 +713,7 @@ int aws_net_receive_packet_cb(WOLFSSL* ssl, void* ctx, byte* packet, int sz, int
 				if (read_count == 1) {
 				    if (recv(*sock, tlsSocketBuf + copy_count, MAIN_WIFI_M2M_BUFFER_SIZE, ssl->rflags)) {
 						AWS_ERROR("Failed to receive packet!");
-						return -1;
+						return WOLFSSL_CBIO_ERR_CONN_CLOSE;
 				    }
 
 					while (!GET_SOCKET_STATUS(SOCKET_STATUS_RECEIVE)) {
@@ -725,8 +724,8 @@ int aws_net_receive_packet_cb(WOLFSSL* ssl, void* ctx, byte* packet, int sz, int
 				} else {
 					if (recv(*sock, tlsSocketBuf + copy_count, MAIN_WIFI_M2M_BUFFER_SIZE, ssl->rflags)) {
 						AWS_ERROR("Failed to receive packet!");
-						return -1;
-				    }
+						return WOLFSSL_CBIO_ERR_CONN_CLOSE;
+					}
 
 					while (!GET_SOCKET_STATUS(SOCKET_STATUS_RECEIVE)) {
 						m2m_wifi_handle_events(NULL);
@@ -750,13 +749,13 @@ int aws_net_receive_packet_cb(WOLFSSL* ssl, void* ctx, byte* packet, int sz, int
 				tlsSocketBuf = (uint8_t*)malloc(MAIN_WIFI_M2M_BUFFER_SIZE * 3);
 				if (tlsSocketBuf == NULL) {
 					AWS_ERROR("Failed to allocate heap!");
-					return -1;
+					return WOLFSSL_CBIO_ERR_GENERAL;
 				}
 
 				if (recv(*sock, tlsSocketBuf, MAIN_WIFI_M2M_BUFFER_SIZE, ssl->rflags)) {
 					AWS_ERROR("Failed to receive packet!");
-					return -1;
-			    }
+					return WOLFSSL_CBIO_ERR_CONN_CLOSE;
+				}
 
 				while (!GET_SOCKET_STATUS(SOCKET_STATUS_RECEIVE)) {
 					m2m_wifi_handle_events(NULL);
@@ -785,13 +784,13 @@ int aws_net_receive_packet_cb(WOLFSSL* ssl, void* ctx, byte* packet, int sz, int
 			tlsSocketBuf = (uint8_t*)malloc(MAIN_WIFI_M2M_BUFFER_SIZE);
 			if (tlsSocketBuf == NULL) {
 				AWS_ERROR("Failed to allocate heap!");
-				return -1;
+				return WOLFSSL_CBIO_ERR_GENERAL;
 			}
 
 			if (recv(*sock, tlsSocketBuf, MAIN_WIFI_M2M_BUFFER_SIZE, ssl->rflags)) {
 				AWS_ERROR("Failed to receive packet!");
-				return -1;
-		    }
+				return WOLFSSL_CBIO_ERR_CONN_CLOSE;
+			}
 
 			aws_kit_init_timer(&waitTimer);
 			if (kit->clientState == CLIENT_STATE_MQTT_WAIT_MESSAGE)

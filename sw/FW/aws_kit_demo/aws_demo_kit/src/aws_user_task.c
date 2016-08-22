@@ -191,7 +191,6 @@ void aws_user_oled1_init(void)
 	NVIC_EnableIRQ((IRQn_Type) OLED1_PIN_PUSHBUTTON_3_ID);
 	pio_handler_set_priority(OLED1_PIN_PUSHBUTTON_3_PIO, (IRQn_Type) OLED1_PIN_PUSHBUTTON_3_ID, 0);
 	pio_enable_interrupt(OLED1_PIN_PUSHBUTTON_3_PIO, OLED1_PIN_PUSHBUTTON_3_MASK);
-
 }
 
 void aws_user_exception_init_timer(t_aws_kit* kit)

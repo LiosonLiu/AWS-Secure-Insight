@@ -118,7 +118,6 @@ int atca_tls_create_pms_cb(WOLFSSL* ssl, unsigned char* pubKey, unsigned int* si
 		ret = atcatls_ecdh(TLS_SLOT_AUTH_PRIV, peerPubKey + 1, ssl->arrays->preMasterSecret);
 		if (ret != 0) BREAK(ret, "Failed: create PMS");
 		ssl->arrays->preMasterSz = ATCA_KEY_SIZE;
-		//atcab_printbin_label((const uint8_t*)"Pre Master Secret\r\n", ssl->arrays->preMasterSecret, ssl->arrays->preMasterSz);
 		atcab_printbin_label((const uint8_t*)"Client public key to be sent\r\n", &pubKey[2], *size - 2);
 
 	} while(0);
@@ -188,7 +187,6 @@ int atca_tls_build_signer_cert(t_atcert* cert)
 
 		if (cert->signer_der == NULL || cert->signer_pem == NULL) BREAK(ret, "Failed: invalid param");
 
-		//ret = atcatls_get_cert(&g_cert_def_1_signer, g_signer_1_ca_public_key, cert->signer_der, (size_t*)&cert->signer_der_size);
 		ret = atcatls_get_cert(&g_cert_def_1_signer, NULL, cert->signer_der, (size_t*)&cert->signer_der_size);
 		if (ret != ATCACERT_E_SUCCESS) BREAK(ret, "Failed: read signer certificate");
 		atcab_printbin_label((const uint8_t*)"Signer DER certficate\r\n", cert->signer_der, cert->signer_der_size);	
